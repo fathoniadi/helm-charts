@@ -48,8 +48,15 @@ serviceAccount:
   imagePullSecrets: []
 
 rbac:
-  create: false
-  rules: []
+  create: true
+  rules:
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - get
+      - list
   # RBAC rules for KUBE_PING
   #  - apiGroups:
   #      - ""
@@ -96,15 +103,40 @@ command: []
 args: []
 
 # Additional environment variables for Keycloak
-extraEnv: ""
-  # - name: KEYCLOAK_LOGLEVEL
-  #   value: DEBUG
-  # - name: WILDFLY_LOGLEVEL
-  #   value: DEBUG
-  # - name: CACHE_OWNERS_COUNT
-  #   value: "2"
-  # - name: CACHE_OWNERS_AUTH_SESSIONS_COUNT
-  #   value: "2"
+extraEnv: |
+  - name: KEYCLOAK_LOGLEVEL
+    value: DEBUG
+  - name: WILDFLY_LOGLEVEL
+    value: DEBUG
+  - name: CACHE_OWNERS_COUNT
+    value: "10"
+  - name: CACHE_OWNERS_AUTH_SESSIONS_COUNT
+    value: "10"
+  - name: KEYCLOAK_USER
+    value: admin
+  - name: DB_VENDOR
+    value: postgres
+  - name: DB_ADDR
+    value: "{ redacted }"
+  - name: DB_DATABASE
+    value: keycloak_code
+  - name: DB_USER
+    value: keycloak
+  - name: DB_PASSWORD
+    value: { redacted }
+  - name: KEYCLOAK_PASSWORD
+    value: "{ redacted }"
+  - name: JGROUPS_DISCOVERY_PROTOCOL
+    value: kubernetes.KUBE_PING
+  - name: KUBERNETES_NAMESPACE
+    valueFrom:
+      fieldRef:
+        apiVersion: v1
+        fieldPath: metadata.namespace
+  - name: PROXY_ADDRESS_FORWARDING
+    value: "true"
+  - name: DB_PORT
+    value: "9999"
 
 # Additional environment variables for Keycloak mapped from Secret or ConfigMap
 extraEnvFrom: ""
@@ -347,7 +379,7 @@ pgchecker:
 
 postgresql:
   # If `true`, the Postgresql dependency is enabled
-  enabled: true
+  enabled: false
   # PostgreSQL User to create
   postgresqlUsername: keycloak
   # PostgreSQL Password for the new user
@@ -432,7 +464,7 @@ autoscaling:
   # If `true`, a autoscaling/v2beta2 HorizontalPodAutoscaler resource is created (requires Kubernetes 1.18 or above)
   # Autoscaling seems to be most reliable when using KUBE_PING service discovery (see README for details)
   # This disables the `replicas` field in the StatefulSet
-  enabled: false
+  enabled: true
   # Additional HorizontalPodAutoscaler labels
   labels: {}
   # The minimum and maximum number of replicas for the Keycloak StatefulSet

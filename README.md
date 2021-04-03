@@ -20,3 +20,6 @@ $ helm repo add codecentric https://codecentric.github.io/helm-charts
 
 We welcome contributions.
 Please refer to our [contribution guidelines](CONTRIBUTING.md) for details.
+
+
+ -server -Xms64m -Xmx512m -XX:MetaspaceSize=96M -XX:MaxMetaspaceSize=256m -Djava.net.preferIPv4Stack=true -Djboss.modules.system.pkgs=org.jboss.byteman -Djava.awt.headless=true   --add-exports=java.base/sun.nio.ch=ALL-UNNAMED --add-exports=jdk.unsupported/sun.misc=ALL-UNNAMED --add-exports=jdk.unsupported/sun.reflect=ALL-UNNAMED
